@@ -1,0 +1,31 @@
+name: Terraform Plan
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.9.1
+
+    - name: Terraform Format Check
+      run: |
+        if ! terraform fmt -check -recursive -diff; then
+          echo "Terraform files are not properly formatted. Please run 'terraform fmt' locally and commit the changes."
+          exit 1
+        fi
+
+    - name: Terraform Init
+      run: terraform init
+    
+    - name: Terraform Plan
+      run: terraform plan
