@@ -38,54 +38,9 @@ jobs:
     - name: Terraform Plan
       id: plan
       working-directory: ./infrastructure/terraform/
-      run: |
-        terraform plan -no-color > tee tf_plan.txt
+      run: terraform plan -no-color > tee tf_plan.txt
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    - name: Update Pull Request
-      uses: actions/github-script@v6
-      if: github.event_name == 'pull_request'
-      with:
-        github-token: ${{secrets.GITHUB_TOKEN}}
-        script: |
-          const fs = require('fs');
-          const plan = fs.readFileSync('tf_plan.txt', 'utf8');
-          const output = `#### Terraform Plan 📖\`${{ github.event.pull_request.head.sha }}\`
-          
-          <details><summary>Show Plan</summary>
-          
-          \`\`\`\n
-          ${plan}
-          \`\`\`
-          
-          </details>
-          
-          *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-          
-          github.rest.issues.listComments({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: context.issue.number,
-          }).then(({ data }) => {
-            const botComment = data.find(comment => {
-              return comment.user.type === 'Bot' && comment.body.includes('Terraform Plan');
-            });
-            
-            if (botComment) {
-              github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: botComment.id,
-                body: output
-              });
-            } else {
-              github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: output
-              });
-            }
-          });
+    
