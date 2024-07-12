@@ -6,6 +6,9 @@ on:
   push:
     branches-ignore:
       - main
+    paths:
+      - '**/*.tf'
+      - '.github/workflows/terraform.yml'
 
 jobs:
   terraform-plan:
