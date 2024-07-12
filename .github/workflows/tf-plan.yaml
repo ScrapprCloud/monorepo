@@ -18,6 +18,7 @@ jobs:
         terraform_version: 1.9.1
 
     - name: Terraform Format Check
+      working-directory: ./infrastructure/terraform/
       run: |
         if ! terraform fmt -check -recursive -diff; then
           echo "Terraform files are not properly formatted. Please run 'terraform fmt' locally and commit the changes."
@@ -25,7 +26,12 @@ jobs:
         fi
 
     - name: Terraform Init
+      working-directory: ./infrastructure/terraform/
       run: terraform init
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     
     - name: Terraform Plan
-      run: terraform plan
+      working-directory: ./infrastructure/terraform/
+      run: terraform plan -no-color
