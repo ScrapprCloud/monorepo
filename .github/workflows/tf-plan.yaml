@@ -36,8 +36,10 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     
     - name: Terraform Plan
+      id: plan
       working-directory: ./infrastructure/terraform/
-      run: terraform plan -no-color > tf_plan.txt
+      run: |
+        terraform plan -no-color > tee tf_plan.txt
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -45,8 +47,6 @@ jobs:
     - name: Update Pull Request
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
-      env:
-        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
@@ -64,28 +64,28 @@ jobs:
           
           *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
           
-          const comments = await github.rest.issues.listComments({
+          github.rest.issues.listComments({
             owner: context.repo.owner,
             repo: context.repo.repo,
             issue_number: context.issue.number,
-          });
-          
-          const botComment = comments.data.find(comment => {
-            return comment.user.type === 'Bot' && comment.body.includes('Terraform Plan');
-          });
-          
-          if (botComment) {
-            await github.rest.issues.updateComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: botComment.id,
-              body: output
+          }).then(({ data }) => {
+            const botComment = data.find(comment => {
+              return comment.user.type === 'Bot' && comment.body.includes('Terraform Plan');
             });
-          } else {
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: output
-            });
-          }
+            
+            if (botComment) {
+              github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: output
+              });
+            } else {
+              github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: output
+              });
+            }
+          });
