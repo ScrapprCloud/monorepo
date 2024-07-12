@@ -38,7 +38,7 @@ jobs:
     - name: Terraform Plan
       id: plan
       working-directory: ./infrastructure/terraform/
-      run: terraform plan -no-color > tee tf_plan.txt
+      run: terraform plan -no-color > tf_plan.txt
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
