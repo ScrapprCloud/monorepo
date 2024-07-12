@@ -37,7 +37,10 @@ jobs:
     
     - name: Terraform Plan
       working-directory: ./infrastructure/terraform/
-      run: terraform plan -no-color
+      run: terraform plan -no-color > tf_plan.txt
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     - name: Update Pull Request
       uses: actions/github-script@v6
