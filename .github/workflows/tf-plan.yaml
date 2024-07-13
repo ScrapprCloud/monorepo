@@ -11,6 +11,10 @@ on:
       - '.github/workflows/terraform.yml'
 
 jobs:
+  deploy:
+    permissions:
+      id-token: write
+      contents: read
   terraform-plan:
     runs-on: ubuntu-24.04
     env:

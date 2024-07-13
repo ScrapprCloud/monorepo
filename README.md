@@ -83,9 +83,17 @@ terraform-plan:
 ```
 - You will need to add all values under the `env` section as environmental variables
 in the GitHub Actions settings section of the repo or globally for the whole Org.
-8. Use the credentials in your Terraform steps:
+8. Add this to your GitHub Actions Workflow as well:
+```
+jobs:
+  deploy:
+    permissions:
+      id-token: write
+      contents: read
+```
+9. Use the credentials in your Terraform steps:
     - The AWS credentials will be automatically available to Terraform.
-9. Ensure your Terraform code uses the assumed role:
+10. Ensure your Terraform code uses the assumed role:
     - In your Terraform AWS provider configuration, you don't need to specify credentials. Terraform will use the credentials from the environment.
 
 By following these steps, you'll set up a secure OIDC connection between GitHub Actions and AWS. This method eliminates the need for long-lived AWS access keys, enhancing security. The IAM role's trust policy ensures that only your specified GitHub repository can assume the role, providing an additional layer of security
