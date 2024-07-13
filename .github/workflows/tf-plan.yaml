@@ -11,12 +11,11 @@ on:
       - '.github/workflows/terraform.yml'
 
 jobs:
-  deploy:
+  terraform-plan:
+    runs-on: ubuntu-24.04
     permissions:
       id-token: write
       contents: read
-  terraform-plan:
-    runs-on: ubuntu-24.04
     env:
       AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
       AWS_REGION: ${{ vars.AWS_REGION }}

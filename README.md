@@ -86,7 +86,8 @@ in the GitHub Actions settings section of the repo or globally for the whole Org
 8. Add this to your GitHub Actions Workflow as well:
 ```
 jobs:
-  deploy:
+  terraform-apply:
+    runs-on: ubuntu-24.04
     permissions:
       id-token: write
       contents: read
