@@ -79,7 +79,7 @@ terraform-plan:
     env:
       AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
       AWS_REGION: ${{ vars.AWS_REGION }}
-      ROLE_NAME: ${{ vars.TERRAFORM_ROLE_NAME }}
+      TERRAFORM_ROLE_NAME: ${{ vars.TERRAFORM_ROLE_NAME }}
 ```
 - You will need to add all values under the `env` section as environmental variables
 in the GitHub Actions settings section of the repo or globally for the whole Org.
